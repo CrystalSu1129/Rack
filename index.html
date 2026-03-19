@@ -2,35 +2,78 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>層架設計器</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; background: #e8e6e0; color: #2c2c2a; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-  header { background: #2a2a28; color: #f0eeea; padding: 8px 16px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-  .main { display: flex; flex: 1; overflow: hidden; }
-  .sidebar { width: 260px; min-width: 260px; background: #f0eeea; border-right: 1px solid #d3d1c7; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-  .sidebar h2 { font-size: 15px; font-weight: 600; color: #2c2c2a; }
-  label { color: #5f5e5a; display: block; margin-bottom: 4px; font-size: 12px; font-weight: 500; }
-  select { width: 100%; padding: 6px 28px 6px 8px; border: 1px solid #c4c2b8; border-radius: 6px; background: #fff; color: #2c2c2a; font-size: 12px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; cursor: pointer; }
-  select:hover { border-color: #888; }
-  select:focus { outline: none; border-color: #3B6D11; box-shadow: 0 0 0 2px rgba(59,109,17,0.15); }
-  .spec-box { background: #fff; border: 1px solid #d3d1c7; border-radius: 8px; padding: 11px; font-size: 11px; line-height: 1.9; }
-  .spec-box .stitle { font-weight: 600; margin-bottom: 3px; color: #2c2c2a; font-size: 12px; }
-  .spec-box .vals { color: #5f5e5a; }
-  .spec-box .total { margin-top: 7px; font-weight: 600; color: #3B6D11; font-size: 12px; border-top: 1px solid #e8e6e0; padding-top: 7px; }
-  .hint-box { background: #e8f3de; border: 1px solid #c0dd97; border-radius: 8px; padding: 10px; font-size: 11px; line-height: 1.8; color: #3B6D11; }
-  .hint-box .htitle { font-weight: 600; margin-bottom: 2px; }
-  .viewport { flex: 1; position: relative; overflow: hidden; }
-  canvas { width: 100% !important; height: 100% !important; display: block; cursor: grab; }
-  canvas:active { cursor: grabbing; }
-  .hud { position: absolute; top: 12px; left: 14px; background: rgba(0,0,0,0.5); color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 12px; pointer-events: none; }
-  .reset-btn { position: absolute; top: 12px; right: 14px; padding: 5px 14px; font-size: 12px; background: rgba(255,255,255,0.9); border: 1px solid #c4c2b8; border-radius: 6px; cursor: pointer; color: #2c2c2a; font-weight: 500; }
-  .reset-btn:hover { background: #fff; }
-  .color-row { display: flex; gap: 6px; align-items: center; }
-  .col-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-  .col-item span { font-size: 10px; color: #5f5e5a; }
-  .col-item input[type=color] { width: 30px; height: 26px; border: 1px solid #c4c2b8; border-radius: 4px; cursor: pointer; padding: 1px; background: #fff; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px; background: #e8e6e0; color: #2c2c2a;
+  height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+}
+header {
+  background: #2a2a28; color: #f0eeea;
+  padding: 8px 16px; font-size: 14px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 160px; min-width: 160px; background: #f0eeea;
+  border-right: 1px solid #d3d1c7; padding: 8px;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+}
+.sidebar h2 { font-size: 12px; font-weight: 600; color: #2c2c2a; }
+label { color: #5f5e5a; display: block; margin-bottom: 2px; font-size: 10px; font-weight: 500; }
+select {
+  width: 100%; padding: 4px 20px 4px 6px;
+  border: 1px solid #c4c2b8; border-radius: 5px;
+  background: #fff; color: #2c2c2a; font-size: 11px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6'%3E%3Cpath d='M1 1l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 6px center;
+  cursor: pointer;
+}
+select:focus { outline: none; border-color: #3B6D11; }
+
+.spec-box {
+  background: #fff; border: 1px solid #d3d1c7; border-radius: 6px;
+  padding: 7px; font-size: 10px; line-height: 1.7;
+}
+.spec-box .stitle { font-weight: 600; color: #2c2c2a; margin-bottom: 1px; font-size: 10px; }
+.spec-box .vals { color: #5f5e5a; }
+.spec-box .total { margin-top: 5px; font-weight: 600; color: #3B6D11; font-size: 10px; border-top: 1px solid #e8e6e0; padding-top: 5px; }
+
+.hint-box {
+  background: #e8f3de; border: 1px solid #c0dd97; border-radius: 6px;
+  padding: 7px; font-size: 10px; line-height: 1.7; color: #3B6D11;
+}
+.hint-box .htitle { font-weight: 600; margin-bottom: 1px; }
+
+.color-row { display: flex; gap: 5px; }
+.col-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.col-item span { font-size: 9px; color: #5f5e5a; }
+.col-item input[type=color] {
+  width: 26px; height: 22px; border: 1px solid #c4c2b8;
+  border-radius: 3px; cursor: pointer; padding: 1px; background: #fff;
+}
+
+/* ── Viewport ── */
+.viewport { flex: 1; position: relative; overflow: hidden; background: #d0cec8; }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+canvas:active { cursor: grabbing; }
+.hud {
+  position: absolute; top: 10px; left: 12px;
+  background: rgba(0,0,0,0.5); color: #fff;
+  padding: 3px 9px; border-radius: 5px; font-size: 12px; pointer-events: none;
+}
+.reset-btn {
+  position: absolute; top: 10px; right: 12px;
+  padding: 5px 13px; font-size: 12px;
+  background: rgba(255,255,255,0.92); border: 1px solid #c4c2b8;
+  border-radius: 6px; cursor: pointer; color: #2c2c2a; font-weight: 500;
+}
 </style>
 </head>
 <body>
@@ -110,28 +153,20 @@
     <div>
       <label>層數:</label>
       <select id="sel-layers">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3" selected>3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
+        <option value="1">1</option><option value="2">2</option>
+        <option value="3" selected>3</option><option value="4">4</option>
+        <option value="5">5</option><option value="6">6</option>
+        <option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option><option value="10">10</option>
       </select>
     </div>
 
     <div>
       <label>每層補強桿支數:</label>
       <select id="sel-bars">
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2" selected>2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+        <option value="0">0</option><option value="1">1</option>
+        <option value="2" selected>2</option><option value="3">3</option>
+        <option value="4">4</option><option value="5">5</option>
       </select>
     </div>
 
@@ -153,247 +188,338 @@
     <div class="hint-box">
       <div class="htitle">3D 操作說明:</div>
       • 拖拽：旋轉視角<br>
-      • 滾輪：縮放大小<br>
+      • 滾輪/雙指：縮放<br>
       • 右鍵拖拽：平移
     </div>
   </div>
 
   <div class="viewport">
-    <div class="hud" id="angle-info">水平: 45°, 垂直: 20°</div>
-    <button class="reset-btn" onclick="resetCamera()">⟳ 重置</button>
-    <canvas id="c3d"></canvas>
+    <div class="hud" id="hud">水平: 45°, 垂直: 20°</div>
+    <button class="reset-btn" id="btn-reset">⟳ 重置</button>
+    <canvas id="cv"></canvas>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const canvas = document.getElementById('c3d');
-const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.BasicShadowMap;
-renderer.setClearColor(0xd0cec8);
+// ── Canvas 2D 3D Engine (no WebGL) ─────────────────────────────────────────
+const cv  = document.getElementById('cv');
+const ctx = cv.getContext('2d');
 
-const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xd0cec8, 4000, 12000);
+let azimuth   = 45;
+let elevation = 20;
+let camDist   = 1400;
+let targetX = 0, targetY = 380, targetZ = 0;
+let scale = 1;  // auto-fit scale
 
-const camera = new THREE.PerspectiveCamera(45, 1, 1, 20000);
+// ── hex / colour helpers ───────────────────────────────────────────────────
+function hexToRgb(h) {
+  const r = parseInt(h.slice(1,3),16)/255;
+  const g = parseInt(h.slice(3,5),16)/255;
+  const b = parseInt(h.slice(5,7),16)/255;
+  return [r,g,b];
+}
+function rgbToHex(r,g,b) {
+  const c = v => Math.max(0,Math.min(255,Math.round(v*255))).toString(16).padStart(2,'0');
+  return '#'+c(r)+c(g)+c(b);
+}
+function shade(rgb, k) { return [rgb[0]*k, rgb[1]*k, rgb[2]*k]; }
 
-// Ground
-const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(8000, 8000),
-  new THREE.MeshLambertMaterial({color: 0xc0beb8})
-);
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
+// ── 3D → 2D projection ────────────────────────────────────────────────────
+function project(x,y,z) {
+  const az = azimuth * Math.PI/180;
+  const el = elevation * Math.PI/180;
+  const cosEl = Math.cos(el), sinEl = Math.sin(el);
+  const cosAz = Math.cos(az), sinAz = Math.sin(az);
 
-// Lights
-scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-const dir = new THREE.DirectionalLight(0xffffff, 0.9);
-dir.position.set(800, 2000, 1000);
-dir.castShadow = true;
-dir.shadow.mapSize.width = 2048;
-dir.shadow.mapSize.height = 2048;
-dir.shadow.camera.near = 1;
-dir.shadow.camera.far = 10000;
-dir.shadow.camera.left = dir.shadow.camera.bottom = -3000;
-dir.shadow.camera.right = dir.shadow.camera.top = 3000;
-scene.add(dir);
-const fill = new THREE.DirectionalLight(0xffffff, 0.2);
-fill.position.set(-400, 600, -800);
-scene.add(fill);
+  // camera position
+  const cx = targetX + camDist * cosEl * sinAz;
+  const cy = targetY + camDist * sinEl;
+  const cz = targetZ + camDist * cosEl * cosAz;
 
-let shelfGroup = new THREE.Group();
-scene.add(shelfGroup);
+  // forward vector
+  const fx = targetX-cx, fy = targetY-cy, fz = targetZ-cz;
+  const fl = Math.sqrt(fx*fx+fy*fy+fz*fz);
+  const fdx=fx/fl, fdy=fy/fl, fdz=fz/fl;
 
-let matFrame = new THREE.MeshLambertMaterial({color: 0x2a2a2a});
-let matShelf = new THREE.MeshLambertMaterial({color: 0xb5894a});
-let matBar   = new THREE.MeshLambertMaterial({color: 0x1a7a6a});
+  // right = forward × up
+  const rx=fdy*0-fdz*1, ry=fdz*0-fdx*0, rz=fdx*1-fdy*0;
+  const rl=Math.sqrt(rx*rx+ry*ry+rz*rz);
+  const rdx=rx/rl, rdy=ry/rl, rdz=rz/rl;
 
-function addBox(w, h, d, mat, x, y, z) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-  m.position.set(x, y, z);
-  m.castShadow = true;
-  m.receiveShadow = true;
-  shelfGroup.add(m);
+  // up = right × forward
+  const ux=rdy*fdz-rdz*fdy, uy=rdz*fdx-rdx*fdz, uz=rdx*fdy-rdy*fdx;
+
+  // relative vector
+  const vx=x-cx, vy=y-cy, vz=z-cz;
+  const pvx = vx*rdx+vy*rdy+vz*rdz;
+  const pvy = vx*ux +vy*uy +vz*uz;
+  const pvz = vx*fdx+vy*fdy+vz*fdz;
+
+  if (pvz <= 0.1) return null;
+  const f = camDist * 0.9 * scale / pvz;
+  const W = cv.width, H = cv.height;
+  return [W/2 + pvx*f, H/2 - pvy*f];
 }
 
-function buildShelf() {
-  while (shelfGroup.children.length) shelfGroup.remove(shelfGroup.children[0]);
+// ── draw a box face ────────────────────────────────────────────────────────
+const LIGHT = [0.45, 0.85, 0.55]; // normalised light direction
+const LLEN  = Math.sqrt(LIGHT[0]**2+LIGHT[1]**2+LIGHT[2]**2);
+LIGHT[0]/=LLEN; LIGHT[1]/=LLEN; LIGHT[2]/=LLEN;
 
+function lightColor(nx,ny,nz, rgb) {
+  const d = Math.max(0, nx*LIGHT[0]+ny*LIGHT[1]+nz*LIGHT[2]);
+  const k = 0.38 + 0.62*d;
+  return rgbToHex(rgb[0]*k, rgb[1]*k, rgb[2]*k);
+}
+
+// Each box face: [corner indices], normal
+const BOX_FACES = [
+  [[0,1,2,3], [ 0, 0,-1]],  // back
+  [[4,5,6,7], [ 0, 0, 1]],  // front
+  [[0,3,7,4], [-1, 0, 0]],  // left
+  [[1,2,6,5], [ 1, 0, 0]],  // right
+  [[0,1,5,4], [ 0,-1, 0]],  // bottom
+  [[3,2,6,7], [ 0, 1, 0]],  // top
+];
+
+function collectBoxFaces(cx,cy,cz, w,h,d, rgb) {
+  const hw=w/2, hh=h/2, hd=d/2;
+  const C = [
+    [cx-hw,cy-hh,cz-hd],[cx+hw,cy-hh,cz-hd],
+    [cx+hw,cy+hh,cz-hd],[cx-hw,cy+hh,cz-hd],
+    [cx-hw,cy-hh,cz+hd],[cx+hw,cy-hh,cz+hd],
+    [cx+hw,cy+hh,cz+hd],[cx-hw,cy+hh,cz+hd],
+  ];
+
+  // camera direction for back-face culling
+  const az=azimuth*Math.PI/180, el=elevation*Math.PI/180;
+  const cdx=Math.cos(el)*Math.sin(az), cdy=Math.sin(el), cdz=Math.cos(el)*Math.cos(az);
+
+  const result = [];
+  for (const [idxs,[nx,ny,nz]] of BOX_FACES) {
+    if (nx*cdx+ny*cdy+nz*cdz < -0.01) continue; // back-face cull
+    const pts = idxs.map(i => project(...C[i]));
+    if (pts.some(p=>!p)) continue;
+    const depth = pts.reduce((s,p)=>s+p[1],0)/pts.length;
+    result.push({ depth, pts, fill: lightColor(nx,ny,nz,rgb), edge: lightColor(nx,ny,nz,shade(rgb,0.55)) });
+  }
+  return result;
+}
+
+// ── Build shelf geometry ───────────────────────────────────────────────────
+let boxes = [];
+
+function buildShelf() {
   const H      = +document.getElementById('sel-h').value;
   const W      = +document.getElementById('sel-w').value;
   const D      = +document.getElementById('sel-d').value;
   const layers = +document.getElementById('sel-layers').value;
   const bars   = +document.getElementById('sel-bars').value;
+  const rgbF   = hexToRgb(document.getElementById('col-frame').value);
+  const rgbS   = hexToRgb(document.getElementById('col-shelf').value);
+  const rgbB   = hexToRgb(document.getElementById('col-bar').value);
 
-  matFrame.color.set(document.getElementById('col-frame').value);
-  matShelf.color.set(document.getElementById('col-shelf').value);
-  matBar.color.set(document.getElementById('col-bar').value);
+  const T=25, ST=15, RT=20, BT=12;
 
-  const T  = 25;   // corner post cross-section
-  const ST = 15;   // shelf board thickness
-  const RT = 20;   // rim rail cross-section
-  const BT = 12;   // reinforcement bar cross-section
+  boxes = [];
+  const add = (cx,cy,cz,w,h,d,rgb) => boxes.push([cx,cy,cz,w,h,d,rgb]);
 
-  // ── 4 corner posts (vertical, full height) ────────────────────────────
-  [[ W/2-T/2,  D/2-T/2],
-   [ W/2-T/2, -D/2+T/2],
-   [-W/2+T/2,  D/2-T/2],
-   [-W/2+T/2, -D/2+T/2]].forEach(([x, z]) => addBox(T, H, T, matFrame, x, H/2, z));
+  // 4 corner posts
+  for (const sx of [W/2-T/2, -W/2+T/2])
+    for (const sz of [D/2-T/2, -D/2+T/2])
+      add(sx, H/2, sz,  T,H,T,  rgbF);
 
-  // ── Per-shelf-level geometry ──────────────────────────────────────────
-  const spacing = layers > 1 ? (H - ST) / (layers - 1) : 0;
+  const spacing = layers>1 ? (H-ST)/(layers-1) : 0;
+  for (let i=0; i<layers; i++) {
+    const y = i*spacing + ST/2;
 
-  for (let i = 0; i < layers; i++) {
-    const y = i * spacing + ST / 2;   // shelf centre-Y
+    // shelf board
+    add(0, y, 0,  W-T*2, ST, D-T*2,  rgbS);
 
-    // Shelf board
-    addBox(W - T*2, ST, D - T*2, matShelf, 0, y, 0);
+    // rim rails: front & back (along X)
+    add(0, y+ST/2+RT/2,  D/2-RT/2,  W-T*2,RT,RT,  rgbF);
+    add(0, y+ST/2+RT/2, -D/2+RT/2,  W-T*2,RT,RT,  rgbF);
+    // rim rails: left & right (along Z)
+    add( W/2-RT/2, y+ST/2+RT/2, 0,  RT,RT,D-T*2,  rgbF);
+    add(-W/2+RT/2, y+ST/2+RT/2, 0,  RT,RT,D-T*2,  rgbF);
 
-    // Rim rails: front & back run along X (width direction)
-    addBox(W - T*2, RT, RT, matFrame,  0,           y + ST/2 + RT/2,  D/2 - RT/2);
-    addBox(W - T*2, RT, RT, matFrame,  0,           y + ST/2 + RT/2, -D/2 + RT/2);
-    // Rim rails: left & right run along Z (depth direction)
-    addBox(RT, RT, D - T*2, matFrame,  W/2 - RT/2, y + ST/2 + RT/2,  0);
-    addBox(RT, RT, D - T*2, matFrame, -W/2 + RT/2, y + ST/2 + RT/2,  0);
-
-    // ── Reinforcement bars ────────────────────────────────────────────
-    // Each bar runs FRONT→BACK (full depth, Z direction), evenly spaced along width (X)
-    if (bars > 0) {
-      const gap = (W - T*2) / (bars + 1);
-      for (let b = 1; b <= bars; b++) {
-        const bx = -W/2 + T + gap * b;          // X position along width
-        addBox(BT, BT, D - T*2, matBar, bx, y + ST/2 + BT/2, 0);
-        //      ↑ thin  ↑ thin  ↑ full depth
+    // reinforcement bars: run FRONT→BACK (full depth, Z direction)
+    // evenly spaced along WIDTH (X direction)
+    if (bars>0) {
+      const gap = (W-T*2)/(bars+1);
+      for (let b=1; b<=bars; b++) {
+        const bx = -W/2+T+gap*b;
+        add(bx, y+ST/2+BT/2, 0,  BT,BT,D-T*2,  rgbB);
       }
     }
   }
 
-  // ── Spec text ─────────────────────────────────────────────────────────
-  const ftH = (H / 304.8).toFixed(2);
-  const ftW = (W / 304.8).toFixed(2);
-  const ftD = (D / 304.8).toFixed(2);
+  // auto-fit scale so shelf always fills the viewport nicely
+  const maxDim = Math.max(W,H,D);
+  targetY = H/2;
+  camDist = maxDim * 1.6;
+  scale   = Math.min(cv.width, cv.height) / 900;
+
+  // spec text
   document.getElementById('spec-text').innerHTML =
-    `高度: ${H} mm (${ftH} 呎)<br>` +
-    `寬度: ${W} mm (${ftW} 呎)<br>` +
-    `深度: ${D} mm (${ftD} 呎)<br>` +
-    `層數: ${layers} 層<br>` +
-    `每層補強桿: ${bars} 支`;
+    `高度: ${H} mm (${(H/304.8).toFixed(2)} 呎)<br>` +
+    `寬度: ${W} mm (${(W/304.8).toFixed(2)} 呎)<br>` +
+    `深度: ${D} mm (${(D/304.8).toFixed(2)} 呎)<br>` +
+    `層數: ${layers} 層<br>每層補強桿: ${bars} 支`;
 
-  const postFt  = (H / 304.8) * 4;
-  const rimFt   = ((W - T*2) * 2 + (D - T*2) * 2) / 304.8 * layers;
-  const barFt   = ((W - T*2) / 304.8) * bars * layers;
-  const total   = postFt + rimFt + barFt;
-  document.getElementById('total-text').textContent = `估算總尺數: ${total.toFixed(2)} 呎`;
+  const postFt = (H/304.8)*4;
+  const rimFt  = ((W-T*2)*2+(D-T*2)*2)/304.8*layers;
+  const barFt  = ((D-T*2)/304.8)*bars*layers;
+  document.getElementById('total-text').textContent =
+    `估算總尺數: ${(postFt+rimFt+barFt).toFixed(2)} 呎`;
 
-  // ── Camera fit ────────────────────────────────────────────────────────
-  target.set(0, H / 2, 0);
-  camDist = Math.max(W, H, D) * 1.6;
-  updateCamera();
+  draw();
 }
 
-// ── Orbit camera ─────────────────────────────────────────────────────────────
-let azimuth = 45, elevation = 20;
-let target  = new THREE.Vector3(0, 380, 0);
-let camDist = 1400;
+// ── Draw scene ─────────────────────────────────────────────────────────────
+function draw() {
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
 
-function updateCamera() {
-  const az = THREE.MathUtils.degToRad(azimuth);
-  const el = THREE.MathUtils.degToRad(elevation);
-  camera.position.set(
-    target.x + camDist * Math.cos(el) * Math.sin(az),
-    target.y + camDist * Math.sin(el),
-    target.z + camDist * Math.cos(el) * Math.cos(az)
-  );
-  camera.lookAt(target);
-  dir.position.set(target.x + 800, target.y + 2000, target.z + 1000);
-  document.getElementById('angle-info').textContent =
-    `水平: ${Math.round(((azimuth % 360) + 360) % 360)}°, 垂直: ${Math.round(elevation)}°`;
-}
+  // background
+  ctx.fillStyle = '#d0cec8';
+  ctx.fillRect(0,0,W,H);
 
-function resetCamera() {
-  azimuth = 45; elevation = 20;
-  const H = +document.getElementById('sel-h').value;
-  target.set(0, H / 2, 0);
-  camDist = Math.max(+document.getElementById('sel-w').value, H, +document.getElementById('sel-d').value) * 1.6;
-  updateCamera();
-}
-
-// ── Input ────────────────────────────────────────────────────────────────────
-let dragging = false, rightDrag = false, px = 0, py = 0;
-canvas.addEventListener('mousedown', e => { dragging = true; rightDrag = e.button === 2; px = e.clientX; py = e.clientY; });
-canvas.addEventListener('contextmenu', e => e.preventDefault());
-window.addEventListener('mouseup', () => { dragging = false; });
-window.addEventListener('mousemove', e => {
-  if (!dragging) return;
-  const dx = e.clientX - px, dy = e.clientY - py;
-  if (rightDrag) {
-    const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd);
-    const right = new THREE.Vector3().crossVectors(fwd, new THREE.Vector3(0,1,0)).normalize();
-    target.addScaledVector(right, -dx * 0.5);
-    target.addScaledVector(new THREE.Vector3(0,1,0), dy * 0.5);
-  } else {
-    azimuth   -= dx * 0.4;
-    elevation  = Math.max(-5, Math.min(85, elevation + dy * 0.3));
+  // ground grid
+  ctx.strokeStyle = '#b8b6b0';
+  ctx.lineWidth = 0.8;
+  const gs=300, gc=6;
+  for (let i=-gc; i<=gc; i++) {
+    const p1=project(i*gs, 0, -gc*gs), p2=project(i*gs, 0, gc*gs);
+    const p3=project(-gc*gs, 0, i*gs), p4=project(gc*gs, 0, i*gs);
+    if(p1&&p2){ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();}
+    if(p3&&p4){ctx.beginPath();ctx.moveTo(p3[0],p3[1]);ctx.lineTo(p4[0],p4[1]);ctx.stroke();}
   }
-  px = e.clientX; py = e.clientY;
-  updateCamera();
+
+  // collect & sort all faces
+  const allFaces = [];
+  for (const [cx,cy,cz,w,h,d,rgb] of boxes)
+    allFaces.push(...collectBoxFaces(cx,cy,cz,w,h,d,rgb));
+  allFaces.sort((a,b) => b.depth - a.depth);
+
+  // draw faces
+  for (const {pts,fill,edge} of allFaces) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0],pts[0][1]);
+    for (let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = edge;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // HUD angle
+  document.getElementById('hud').textContent =
+    `水平: ${Math.round(((azimuth%360)+360)%360)}°, 垂直: ${Math.round(elevation)}°`;
+}
+
+// ── Resize canvas to physical pixels ──────────────────────────────────────
+function resizeCanvas() {
+  const vp  = cv.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  const w   = vp.clientWidth;
+  const h   = vp.clientHeight;
+  if (w===0||h===0) return;
+  cv.width  = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  cv.style.width  = w+'px';
+  cv.style.height = h+'px';
+  ctx.scale(dpr, dpr);
+  scale = Math.min(w,h)/900;
+  draw();
+}
+
+// ── Input handling ─────────────────────────────────────────────────────────
+let drag=false, rightDrag=false, px=0, py=0;
+
+cv.addEventListener('mousedown', e => {
+  drag=true; rightDrag=e.button===2; px=e.clientX; py=e.clientY;
 });
-canvas.addEventListener('wheel', e => {
-  camDist = Math.max(100, Math.min(15000, camDist + e.deltaY * 1.2));
-  updateCamera(); e.preventDefault();
-}, {passive: false});
-
-let ltd = 0, ltx = 0, lty = 0;
-canvas.addEventListener('touchstart', e => {
-  if (e.touches.length === 1) { ltx = e.touches[0].clientX; lty = e.touches[0].clientY; }
-  else if (e.touches.length === 2) ltd = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-  e.preventDefault();
-}, {passive: false});
-canvas.addEventListener('touchmove', e => {
-  if (e.touches.length === 1) {
-    azimuth   -= (e.touches[0].clientX - ltx) * 0.4;
-    elevation  = Math.max(-5, Math.min(85, elevation + (e.touches[0].clientY - lty) * 0.3));
-    ltx = e.touches[0].clientX; lty = e.touches[0].clientY;
-    updateCamera();
-  } else if (e.touches.length === 2) {
-    const d = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
-    camDist = Math.max(100, Math.min(15000, camDist - (d - ltd) * 2));
-    ltd = d; updateCamera();
+cv.addEventListener('contextmenu', e=>e.preventDefault());
+window.addEventListener('mouseup', ()=>{ drag=false; });
+window.addEventListener('mousemove', e=>{
+  if(!drag) return;
+  const dx=e.clientX-px, dy=e.clientY-py;
+  if(rightDrag){
+    const az=azimuth*Math.PI/180;
+    targetX -= dx*Math.cos(az)*0.6;
+    targetZ -= dx*(-Math.sin(az))*0.6;
+    targetY += dy*0.6;
+  } else {
+    azimuth   -= dx*0.4;
+    elevation  = Math.max(-5, Math.min(85, elevation+dy*0.3));
   }
+  px=e.clientX; py=e.clientY; draw();
+});
+cv.addEventListener('wheel', e=>{
+  camDist = Math.max(100, Math.min(20000, camDist+e.deltaY*1.5));
+  draw(); e.preventDefault();
+},{passive:false});
+
+// Touch
+let touches={}, lastPinchDist=0;
+cv.addEventListener('touchstart', e=>{
   e.preventDefault();
-}, {passive: false});
-
-// ── Resize & render loop ──────────────────────────────────────────────────────
-function resize() {
-  const vp = canvas.parentElement;
-  const w = vp.clientWidth;
-  const h = vp.clientHeight;
-  if (w === 0 || h === 0) return;
-  if (renderer.domElement.width  !== Math.round(w * renderer.getPixelRatio()) ||
-      renderer.domElement.height !== Math.round(h * renderer.getPixelRatio())) {
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+  for(const t of e.changedTouches) touches[t.identifier]={x:t.clientX,y:t.clientY};
+  if(e.touches.length===2){
+    const a=e.touches[0], b=e.touches[1];
+    lastPinchDist=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
   }
-}
+},{passive:false});
+cv.addEventListener('touchmove', e=>{
+  e.preventDefault();
+  if(e.touches.length===1){
+    const t=e.touches[0];
+    const prev=touches[t.identifier];
+    if(prev){
+      const dx=t.clientX-prev.x, dy=t.clientY-prev.y;
+      azimuth   -= dx*0.4;
+      elevation  = Math.max(-5, Math.min(85, elevation+dy*0.3));
+      draw();
+    }
+    touches[t.identifier]={x:t.clientX,y:t.clientY};
+  } else if(e.touches.length===2){
+    const a=e.touches[0], b=e.touches[1];
+    const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+    camDist=Math.max(100,Math.min(20000,camDist-(d-lastPinchDist)*3));
+    lastPinchDist=d;
+    for(const t of e.touches) touches[t.identifier]={x:t.clientX,y:t.clientY};
+    draw();
+  }
+},{passive:false});
+cv.addEventListener('touchend', e=>{
+  for(const t of e.changedTouches) delete touches[t.identifier];
+},{passive:false});
 
+// Reset button
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  azimuth=45; elevation=20;
+  const H=+document.getElementById('sel-h').value;
+  const W=+document.getElementById('sel-w').value;
+  const D=+document.getElementById('sel-d').value;
+  targetX=0; targetY=H/2; targetZ=0;
+  camDist=Math.max(H,W,D)*1.6;
+  draw();
+});
+
+// Selects
 ['sel-h','sel-w','sel-d','sel-layers','sel-bars','col-frame','col-shelf','col-bar']
-  .forEach(id => document.getElementById(id).addEventListener('change', buildShelf));
+  .forEach(id=>document.getElementById(id).addEventListener('change', buildShelf));
 
-// Safari: canvas size is 0 at script-run time; force init after layout
-window.addEventListener('load', () => { resize(); renderer.render(scene, camera); });
-setTimeout(() => { resize(); }, 0);
-
+// ── Init ────────────────────────────────────────────────────────────────────
+window.addEventListener('resize', resizeCanvas);
+// Safari needs this after full page load
+window.addEventListener('load', ()=>{ resizeCanvas(); buildShelf(); });
+// Also try immediately (Chrome/Firefox)
+resizeCanvas();
 buildShelf();
-
-(function animate() {
-  requestAnimationFrame(animate);
-  resize();
-  renderer.render(scene, camera);
-})();
 </script>
 </body>
 </html>
